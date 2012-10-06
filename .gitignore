@@ -11,8 +11,11 @@
 db/*.sqlite3
 
 # Ignore all logfiles and tempfiles.
-log/*.log
-tmp
+/log/*
+/tmp/*
+tmp/*
+tmp/pids/*.pid
+tmp/pids/server.pid
 
 /config/database.yml
 
