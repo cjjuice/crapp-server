@@ -17,5 +17,14 @@ test:
   database: db/test.sqlite3
   pool: 5
   timeout: 5000
+  
+production:
+  adapter: postgresql
+  encoding: utf8
+  reconnect: false
+  database: DATABASE_PRODUCTION
+  pool: 5
+  username: root
+  password:
 
 

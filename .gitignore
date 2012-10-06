@@ -17,7 +17,5 @@ tmp/*
 tmp/pids/*.pid
 tmp/pids/server.pid
 
-/config/database.yml
-
 #ignore
 .DS_Store
