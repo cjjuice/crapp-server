@@ -43,17 +43,31 @@ class BathroomsController < ApplicationController
 
     bathroom = Bathroom.find(id)
 
-    bathroomScores = Array.new
+    publishedScores = Array.new
 
-    bathroomScores.push({ 'type' => 'cleanliness',
-                          'score' => 5 })
+    weightedScores = Hash.new
 
-    bathroomScores.push({ 'type' => 'atmosphere',
-                           'score' => 4 })
+    bathroom.scores.each do |s|
+      if weightedScores[s.scoretype.stype]
+        weightedScores[s.scoretype.stype]['sum'] = weightedScores[s.scoretype.stype]['sum'] + s.value 
+        weightedScores[s.scoretype.stype]['count'] = weightedScores[s.scoretype.stype]['count'] + 1
+        weightedScores[s.scoretype.stype]['score'] = weightedScores[s.scoretype.stype]['sum'] / weightedScores[s.scoretype.stype]['count']
+      else
+        weightedScores[s.scoretype.stype] = Hash.new
+        weightedScores[s.scoretype.stype]['sum'] = s.value
+        weightedScores[s.scoretype.stype]['count'] = 1
+        weightedScores[s.scoretype.stype]['score'] = weightedScores[s.scoretype.stype]['sum'] / weightedScores[s.scoretype.stype]['count']
+
+      end
+    end
+
+    weightedScores.each do |k, v|
+      publishedScores.push({'type' => k, 'score' => v['score'], 'count' => v['count']})
+    end
 
     bathroomInfo = { 'info' => bathroom,
                      'type' => bathroom.bathroomtype.btype,
-                     'scores' => bathroomScores }
+                     'scores' => publishedScores }
 
     #render :json => { :bathroom => bathroom }
     render :json => { 'bathrooms' => [ bathroomInfo ] }
