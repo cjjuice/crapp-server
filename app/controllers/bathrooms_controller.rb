@@ -1,3 +1,5 @@
+require 'geokit'
+
 class BathroomsController < ApplicationController
   def add
     
@@ -39,38 +41,91 @@ class BathroomsController < ApplicationController
   def fetch
     # GET /bathroom/fetch
     # https://something.com/bathroom/fetch?id=23
+
     id = params[:id]
+    lat = params[:lat]
+    lng = params[:lng]
 
-    bathroom = Bathroom.find(id)
+    output = Array.new
 
-    publishedScores = Array.new
+    # Fetch by ID
+    if id 
 
-    weightedScores = Hash.new
+      bathrooms = [ Bathroom.find(id) ]
 
-    bathroom.scores.each do |s|
-      if weightedScores[s.scoretype.stype]
-        weightedScores[s.scoretype.stype]['sum'] = weightedScores[s.scoretype.stype]['sum'] + s.value 
-        weightedScores[s.scoretype.stype]['count'] = weightedScores[s.scoretype.stype]['count'] + 1
-        weightedScores[s.scoretype.stype]['score'] = weightedScores[s.scoretype.stype]['sum'] / weightedScores[s.scoretype.stype]['count']
-      else
-        weightedScores[s.scoretype.stype] = Hash.new
-        weightedScores[s.scoretype.stype]['sum'] = s.value
-        weightedScores[s.scoretype.stype]['count'] = 1
-        weightedScores[s.scoretype.stype]['score'] = weightedScores[s.scoretype.stype]['sum'] / weightedScores[s.scoretype.stype]['count']
+    # Fetch by location
+    else
 
+      bathrooms = []
+
+      list = Bathroom.all
+
+      list.each do |bathroom|
+        # Geocode the Lat/Lng
+        begin
+          bathroom_origin = bathroom.lat + "," + bathroom.lng
+          bathroom_location = Geokit::Geocoders::YahooGeocoder.geocode bathroom_origin
+
+          #
+          # Super UNSAFE! This is user supplied data that is NOT sanitized! This
+          # needs to be changed in the future.
+          #
+          user_origin = lat + "," + lng
+          user_location = Geokit::Geocoders::YahooGeocoder.geocode(user_origin)
+       
+          # Calculate the distance
+          distance = user_location.distance_to(bathroom_location)
+        # Bad stuff can happen. So this should keep us safe <3
+        rescue
+          distance = 9999
+        end
+
+        # If the bathroom is within a 5 mile radius, add to to the list!
+        if distance < 5
+         bathrooms.push(bathroom)
+        end
       end
-    end
+    end 
 
-    weightedScores.each do |k, v|
-      publishedScores.push({'type' => k, 'score' => v['score'], 'count' => v['count']})
-    end
+    bathrooms.each do |bathroom|
 
-    bathroomInfo = { 'info' => bathroom,
-                     'type' => bathroom.bathroomtype.btype,
-                     'scores' => publishedScores }
+      publishedScores = Array.new
+
+      weightedScores = Hash.new
+
+      bathroom.scores.each do |s|
+        if weightedScores[s.scoretype.stype]
+          weightedScores[s.scoretype.stype]['sum'] = weightedScores[s.scoretype.stype]['sum'] + s.value 
+          weightedScores[s.scoretype.stype]['count'] = weightedScores[s.scoretype.stype]['count'] + 1
+          weightedScores[s.scoretype.stype]['score'] = weightedScores[s.scoretype.stype]['sum'] / weightedScores[s.scoretype.stype]['count']
+        else
+          weightedScores[s.scoretype.stype] = Hash.new
+          weightedScores[s.scoretype.stype]['sum'] = s.value
+          weightedScores[s.scoretype.stype]['count'] = 1
+          weightedScores[s.scoretype.stype]['score'] = weightedScores[s.scoretype.stype]['sum'] / weightedScores[s.scoretype.stype]['count']
+
+        end
+      end
+
+      weightedScores.each do |k, v|
+        publishedScores.push({'type' => k, 'score' => v['score'], 'count' => v['count']})
+      end
+
+      btype = ""
+
+      if bathroom.bathroomtype 
+        btype = bathroom.bathroomtype.btype
+      end   
+
+      bathroomInfo = { 'info' => bathroom,
+                       'type' => btype,
+                       'scores' => publishedScores }
+
+      output.push(bathroomInfo)
+    end 
 
     #render :json => { :bathroom => bathroom }
-    render :json => { 'bathrooms' => [ bathroomInfo ] }
+    render :json => { 'bathrooms' => output }
   end
 
   def update
