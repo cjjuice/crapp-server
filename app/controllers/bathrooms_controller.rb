@@ -5,7 +5,6 @@ class BathroomsController < ApplicationController
     # http://something.com/bathroom/add?name=Test&address=Blah&...
 
     bathroom = Bathroom.create
-    bathroomType = Bathroomtype.create
     
     bathroom.isHandicapAccessible = params[:isHandicapAccessible]
     bathroom.isPublic = params[:isPublic]
@@ -26,7 +25,7 @@ class BathroomsController < ApplicationController
     bathroom.lng = params[:lng]
     bathroom.save
 
-    bathroomType.btype = params[:bathroomType]
+    bathroomType = Bathroomtype.find_or_create_by_btype(params[:bathroomType])
     bathroomType.save
 
     bathroom.bathroomtype = bathroomType
