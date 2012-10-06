@@ -8,6 +8,10 @@ Server::Application.routes.draw do
   get "bathrooms/delete"
   
   get 'reviews/add'
+  
+  match 'feeds' => 'feeds#index'
+  
+  get 'feeds/fetch'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
