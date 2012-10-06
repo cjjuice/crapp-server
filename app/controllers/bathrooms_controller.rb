@@ -38,8 +38,26 @@ class BathroomsController < ApplicationController
   end
 
   def fetch
-    #https://something.com/bathroom/fetch?id=23
-    @id = params[:id]
+    # GET /bathroom/fetch
+    # https://something.com/bathroom/fetch?id=23
+    id = params[:id]
+
+    bathroom = Bathroom.find(id)
+
+    bathroomScores = Array.new
+
+    bathroomScores.push({ 'type' => 'cleanliness',
+                          'score' => 5 })
+
+    bathroomScores.push({ 'type' => 'atmosphere',
+                           'score' => 4 })
+
+    bathroomInfo = { 'info' => bathroom,
+                     'type' => bathroom.bathroomtype.btype,
+                     'scores' => bathroomScores }
+
+    #render :json => { :bathroom => bathroom }
+    render :json => { 'bathrooms' => [ bathroomInfo ] }
   end
 
   def update
