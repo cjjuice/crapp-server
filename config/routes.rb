@@ -6,6 +6,8 @@ Server::Application.routes.draw do
   get "bathrooms/update"
 
   get "bathrooms/delete"
+  
+  get 'reviews/add'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
