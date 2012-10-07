@@ -47,6 +47,7 @@ class BathroomsController < ApplicationController
     lng = params[:lng]
 
     output = Array.new
+    distanceHash = Hash.new
 
     # Fetch by ID
     if id 
@@ -77,12 +78,13 @@ class BathroomsController < ApplicationController
           distance = user_location.distance_to(bathroom_location)
         # Bad stuff can happen. So this should keep us safe <3
         rescue
-          distance = 9999
+          distance = -1
         end
 
         # If the bathroom is within a 5 mile radius, add to to the list!
-        if distance < 5
-         bathrooms.push(bathroom)
+        if distance >= 0 && distance <= 5
+          bathrooms.push(bathroom)
+          distanceHash.store(bathroom, distance)
         end
       end
     end 
@@ -122,7 +124,8 @@ class BathroomsController < ApplicationController
       bathroomInfo = { 'info' => bathroom,
                        'type' => btype,
                        'scores' => publishedScores,
-                       'reviews' => reviews }
+                       'reviews' => reviews,
+                       'distance' => distanceHash[bathroom] }
 
       output.push(bathroomInfo)
     end 
