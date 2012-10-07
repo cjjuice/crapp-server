@@ -35,7 +35,7 @@ class BathroomsController < ApplicationController
     # Save everything.
     bathroom.save  
     
-    render :json => { 'id' => bathroom.id } 
+    render :json => { 'id' => bathroom.id }, :callback => params[:callback]
   end
 
   def fetch
@@ -56,7 +56,7 @@ class BathroomsController < ApplicationController
 
     # Fetch by location
     else
-
+    
       bathrooms = []
 
       list = Bathroom.all
@@ -72,7 +72,7 @@ class BathroomsController < ApplicationController
           # needs to be changed in the future.
           #
           user_origin = lat + "," + lng
-          user_location = Geokit::Geocoders::YahooGeocoder.geocode(user_origin)
+          user_location = Geokit::Geocoders::YahooGeocoder.geocode user_origin
        
           # Calculate the distance
           distance = user_location.distance_to(bathroom_location)
@@ -130,8 +130,8 @@ class BathroomsController < ApplicationController
       output.push(bathroomInfo)
     end 
 
-    #render :json => { :bathroom => bathroom }
-    render :json => { 'bathrooms' => output }
+    #render :json => { 'bathrooms' => output }
+    render :json => { 'bathrooms' => output }, :callback => params[:callback]
   end
 
   def update
