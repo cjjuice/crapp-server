@@ -6,7 +6,7 @@ class FeedsController < ApplicationController
     
   def fetch
     feedHash = {'cnn' => "http://rss.cnn.com/rss/cnn_mostpopular.rss",
-      'espn' => "http://sports.espn.go.com/espn/rss/news"}
+                'espn' => "http://sports.espn.go.com/espn/rss/news"}
     
     feeds = []
      
@@ -31,9 +31,9 @@ class FeedsController < ApplicationController
     end  
     
       begin
-        render :json => { 'items' => items }
+        render :json => { 'items' => items }, :callback => params[:callback] 
       rescue
-        render :json => { 'title' => "krapp!!", 'items' => [] }
+        render :json => { 'title' => "krapp!!", 'items' => [] }, :callback => params[:callback] 
       end    
          
   end  

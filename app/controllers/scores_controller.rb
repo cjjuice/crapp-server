@@ -32,7 +32,7 @@ class ScoresController < ApplicationController
       end
     end
 
-    render :json => { 'status' => status }
+    render :json => { 'status' => status }, :callback => params[:callback] 
   end
 
 end

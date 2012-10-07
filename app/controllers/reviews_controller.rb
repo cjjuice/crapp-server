@@ -7,6 +7,6 @@ class ReviewsController < ApplicationController
     
     review.save 
     
-    render :json => { 'id' => review.id }
+    render :json => { 'id' => review.id }, :callback => params[:callback] 
   end  
 end  
