@@ -116,10 +116,13 @@ class BathroomsController < ApplicationController
       if bathroom.bathroomtype 
         btype = bathroom.bathroomtype.btype
       end   
+      
+      reviews = bathroom.reviews
 
       bathroomInfo = { 'info' => bathroom,
                        'type' => btype,
-                       'scores' => publishedScores }
+                       'scores' => publishedScores,
+                       'reviews' => reviews }
 
       output.push(bathroomInfo)
     end 
