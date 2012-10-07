@@ -13,6 +13,8 @@ Server::Application.routes.draw do
   
   get 'feeds/fetch'
 
+  get 'scores/add'
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
