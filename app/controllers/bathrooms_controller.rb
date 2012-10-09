@@ -1,5 +1,3 @@
-require 'geokit'
-
 class BathroomsController < ApplicationController
   def add
     
@@ -48,43 +46,29 @@ class BathroomsController < ApplicationController
 
     output = Array.new
     distanceHash = Hash.new
-
     # Fetch by ID
     if id 
-
-      bathrooms = [ Bathroom.find(id) ]
+      
+      bathrooms = [Bathroom.find(id)]
 
     # Fetch by location
     else
-    
       bathrooms = []
-
-      list = Bathroom.all
+      list = Bathroom.near([lat,lng], 5)
 
       list.each do |bathroom|
+
         # Geocode the Lat/Lng
         begin
-          bathroom_origin = bathroom.lat + "," + bathroom.lng
-          bathroom_location = Geokit::Geocoders::YahooGeocoder.geocode bathroom_origin
-
-          #
-          # Super UNSAFE! This is user supplied data that is NOT sanitized! This
-          # needs to be changed in the future.
-          #
-          user_origin = lat + "," + lng
-          user_location = Geokit::Geocoders::YahooGeocoder.geocode user_origin
-       
           # Calculate the distance
-          distance = user_location.distance_to(bathroom_location)
+          distance = bathroom.distance_from([lat,lng])
         # Bad stuff can happen. So this should keep us safe <3
         rescue
           distance = -1
         end
-
-        # If the bathroom is within a 5 mile radius, add to to the list!
-        if distance >= 0 && distance <= 5
+        if distance >= 0
           bathrooms.push(bathroom)
-          distanceHash.store(bathroom, distance)
+          distanceHash.store(bathroom, distance) 
         end
       end
     end 
@@ -119,24 +103,18 @@ class BathroomsController < ApplicationController
         btype = bathroom.bathroomtype.btype
       end   
       
-      reviews = bathroom.reviews
+        reviews = bathroom.reviews
 
-      bathroomInfo = { 'info' => bathroom,
-                       'type' => btype,
-                       'scores' => publishedScores,
-                       'reviews' => reviews,
-                       'distance' => distanceHash[bathroom] }
+        bathroomInfo = { 'info' => bathroom,
+                         'type' => btype,
+                         'scores' => publishedScores,
+                         'reviews' => reviews,
+                         'distance' => distanceHash[bathroom] }
 
-      output.push(bathroomInfo)
-    end 
+        output.push(bathroomInfo) 
 
-    #render :json => { 'bathrooms' => output }
-    render :json => { 'bathrooms' => output }, :callback => params[:callback]
-  end
-
-  def update
-  end
-
-  def delete
-  end
+    end
+     #render :json => { 'bathrooms' => output }
+     render :json => { 'bathrooms' => output } , :callback => params[:callback]
+  end  
 end

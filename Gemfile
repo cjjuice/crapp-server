@@ -26,7 +26,7 @@ end
 
 gem 'jquery-rails'
 
-gem 'geokit'
+gem 'geocoder'
 gem 'feedzirra'
 
 # To use ActiveModel has_secure_password
