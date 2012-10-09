@@ -6,8 +6,8 @@ class CreateBathrooms < ActiveRecord::Migration
       t.string :city
       t.string :state
       t.string :zip
-      t.float :lat, :scale => 12, :precision => 15
-      t.float :lng, :scale => 12, :precision => 15
+      t.real :lat
+      t.real :lng
       t.boolean :isHandicapAccessible
       t.boolean :isPublic
       t.boolean :isFamily
