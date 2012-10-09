@@ -19,8 +19,8 @@ ActiveRecord::Schema.define(:version => 20121007134820) do
     t.string   "city"
     t.string   "state"
     t.string   "zip"
-    t.float    "lat",                  :limit => 255
-    t.float    "lng",                  :limit => 255
+    t.real    "lat"
+    t.real    "lng"               
     t.boolean  "isHandicapAccessible"
     t.boolean  "isPublic"
     t.boolean  "isFamily"
