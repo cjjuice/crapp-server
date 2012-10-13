@@ -1,4 +1,10 @@
 Server::Application.routes.draw do
+  get "sessions/new"
+
+  get "developers/new"
+
+  get "developers/create"
+
   get "bathrooms/add"
 
   get "bathrooms/fetch"
@@ -14,7 +20,15 @@ Server::Application.routes.draw do
   get 'feeds/fetch'
 
   get 'scores/add'
+  
+  get 'signup', to: 'developers#new', as: 'signup'
+  get 'login', to: 'sessions#new', as: 'login'
+  get 'logout', to: 'sessions#destroy', as: 'logout'
 
+  resources :developers
+  resources :sessions
+  
+  root :to => 'developers#main'
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

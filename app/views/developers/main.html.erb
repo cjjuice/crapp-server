@@ -1,0 +1,6 @@
+<h1>Krapp Developers</h1>
+
+<% if current_developer %>
+  <h3>Email: <%= current_developer.email %> </h3>
+	<h3>API Key: <%= current_developer.api_key.access_token %></h3>
+<% end %>	

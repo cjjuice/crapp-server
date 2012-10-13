@@ -11,10 +11,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121013190327) do
+ActiveRecord::Schema.define(:version => 20121013195444) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "access_token"
+    t.integer  "developer_id"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
   end
@@ -48,6 +49,13 @@ ActiveRecord::Schema.define(:version => 20121013190327) do
     t.string   "btype"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+  end
+
+  create_table "developers", :force => true do |t|
+    t.string   "email"
+    t.string   "password_digest"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
   end
 
   create_table "reviews", :force => true do |t|
